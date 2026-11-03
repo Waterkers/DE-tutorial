@@ -1,0 +1,77 @@
+# Build the Docker image and test it on both processor types students use:
+#   amd64 - Windows PCs, Intel Macs, most Linux computers
+#   arm64 - Macs with Apple Silicon (M1, M2, ...)
+# Each runs natively on its own GitHub-hosted runner; no emulation.
+#
+# The build itself runs docker/smoke_test.R, so it fails if the DE analyses give wrong results.
+# After that, every solution notebook (English and German) is run in the image.
+
+name: Test image
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+  # Once a month, so a disappearing download (GEO, GDC, bioconda) is noticed
+  # before a practical day, not on it.
+  schedule:
+    - cron: "0 6 1 * *"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: English and German notebooks run the same code
+        if: matrix.arch == 'amd64'
+        run: python3 tools/check_parity.py
+
+      # The data stage (Bioconductor annotation packages) needs several GB of disk.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
+          df -h /
+
+      - name: Build image (includes the DE smoke test)
+        run: docker build --progress=plain -t de-practical:test docker
+
+      - name: Run all solution notebooks
+        run: tools/run_solutions.sh de-practical:test
+
+      # start.sh passes the host's user ID; on a Mac that is 501:20, not the image's
+      # 1000. JupyterLab must still start.
+      - name: JupyterLab starts with a Mac user ID
+        run: |
+          docker run -d --name mac-user -u root -e NB_UID=501 -e NB_GID=20 -p 127.0.0.1:8889:8888 \
+              de-practical:test start-notebook.py --IdentityProvider.token=
+          for _ in $(seq 1 60); do
+            if curl -fs -o /dev/null http://localhost:8889/api; then break; fi
+            sleep 1
+          done
+          docker logs mac-user 2>&1 | tail -20
+          curl -fs -o /dev/null http://localhost:8889/api
+          ! docker logs mac-user 2>&1 | grep -q "Permission denied"
+
+      - name: Keep the executed notebooks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: solutions-${{ matrix.arch }}
+          path: teacher/solutions/
+          retention-days: 14

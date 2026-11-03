@@ -1,0 +1,18 @@
+# Build output of tools/make_student_package.sh
+dist/
+# Jupyter autosave copies
+.ipynb_checkpoints/
+# Local settings; copy .env.example to .env to use one
+.env
+# R and Python leftovers from working on the helpers and tools
+.Rhistory
+.RData
+.Rproj.user/
+__pycache__/
+# Editor and operating system files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db

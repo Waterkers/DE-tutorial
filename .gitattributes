@@ -1,0 +1,4 @@
+# Keep line endings right on every platform, also when cloned on Windows with autocrlf:
+# shell scripts run in Docker or on Mac/Linux and break with CRLF; .bat files need CRLF.
+* text=auto eol=lf
+*.bat text eol=crlf

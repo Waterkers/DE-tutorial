@@ -1,0 +1,17 @@
+
+# --- DE practical -------------------------------------------------------------------------
+# limma and edgeR are attached in every session, next to R's default packages; the
+# practical's helpers (/opt/de-setup/helpers) sit in their own environment, so
+# rm(list = ls()) in a notebook doesn't remove them.
+options(defaultPackages = c(getOption("defaultPackages"), "limma", "edgeR"),
+        repr.plot.width = 9, repr.plot.height = 5.5, repr.plot.res = 110,
+        jupyter.plot_mimetypes = "image/png",   # one image per plot keeps notebooks small
+        width = 120, de_practical.lang = "en")
+# The functions themselves live in an environment below the global one, so they find
+# utils, stats, limma etc. on the search path once those are attached.
+local({
+    impl <- new.env(parent = globalenv())
+    sys.source("/opt/de-setup/helpers/de_helpers.R", envir = impl, keep.source = FALSE)
+    env <- attach(NULL, name = "de_helpers")
+    for (name in ls(impl, all.names = TRUE)) assign(name, get(name, impl), envir = env)
+})

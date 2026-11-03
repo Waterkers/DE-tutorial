@@ -1,0 +1,60 @@
+{
+  "_comment": [
+    "German translations of JupyterLab menu items that the official language pack",
+    "(jupyterlab-language-pack-de-DE) leaves in English or gets wrong. Merged into the",
+    "pack at build time by add_translations.py.",
+    "  add:     keys the pack doesn't have; skipped if a newer pack adds them itself.",
+    "  correct: keys the pack has, with a wrong value; always replaced.",
+    "Values are lists: [text] for plain labels, [singular, plural] for labels that",
+    "depend on the number of selected cells. Keys with a context are written as",
+    "'context\\u0004text', e.g. 'menu\\u0004Terminal Theme'."
+  ],
+  "jupyterlab": {
+    "add": {
+      "Run Selected Cell": ["Ausgewählte Zelle ausführen", "Ausgewählte Zellen ausführen"],
+      "Run Selected Cell and Insert Below": ["Ausgewählte Zelle ausführen und neue Zelle darunter einfügen", "Ausgewählte Zellen ausführen und neue Zelle darunter einfügen"],
+      "Run Selected Cell and Do not Advance": ["Ausgewählte Zelle ausführen, ohne weiterzuspringen", "Ausgewählte Zellen ausführen, ohne weiterzuspringen"],
+      "Paste Cell Above": ["Zelle oberhalb einfügen", "Zellen oberhalb einfügen"],
+      "Paste Cell and Replace": ["Zelle einfügen und ersetzen", "Zellen einfügen und ersetzen"],
+      "Move Cell Up": ["Zelle nach oben verschieben", "Zellen nach oben verschieben"],
+      "Move Cell Down": ["Zelle nach unten verschieben", "Zellen nach unten verschieben"],
+      "Merge Cell Above": ["Mit Zelle oberhalb zusammenführen"],
+      "Merge Cell Below": ["Mit Zelle unterhalb zusammenführen"],
+      "Clear Cell Output": ["Zellenausgabe löschen"],
+      "Clear Outputs of All Cells": ["Ausgaben aller Zellen löschen"],
+      "Restart Kernel and Clear Outputs of All Cells…": ["Kernel neu starten und Ausgaben aller Zellen löschen…"],
+      "Copy Selected Text": ["Ausgewählten Text kopieren"],
+      "Cut Selected Text": ["Ausgewählten Text ausschneiden"],
+      "Paste Text": ["Text einfügen"],
+      "Create New View for Cell Output": ["Neue Ansicht für Zellenausgabe erstellen"],
+      "New Subshell Console for Notebook": ["Neue Subshell-Konsole für Notebook"],
+      "Open Recent": ["Zuletzt geöffnet"],
+      "Close and Shut Down Notebook…": ["Notebook schließen und herunterfahren…"],
+      "Revert %1 to Checkpoint…": ["%1 auf Checkpoint zurücksetzen…"],
+      "Duplicate %1": ["%1 duplizieren"],
+      "Sessions and Tabs": ["Sitzungen und Tabs"],
+      "Debugger Panel": ["Debugger-Bereich"],
+      "Match Brackets": ["Zusammengehörige Klammern hervorheben"],
+      "Render Side-by-Side": ["Nebeneinander anzeigen"],
+      "Activate Previous Tab Bar": ["Vorherige Tab-Leiste aktivieren"],
+      "Auto Close Brackets": ["Klammern automatisch schließen"],
+      "menu\u0004Terminal Theme": ["Terminal-Design"],
+      "Settings Editor": ["Einstellungseditor"],
+      "Show Keyboard Shortcuts…": ["Tastenkürzel anzeigen…"],
+      "menu\u0004Text Editor Theme": ["Texteditor-Design"],
+      "menu\u0004Text Editor Syntax Highlighting": ["Syntaxhervorhebung im Texteditor"],
+      "menu\u0004Save and Export Notebook As": ["Notebook speichern und exportieren als"]
+    },
+    "correct": {
+      "Collapse Selected Code": ["Ausgewählten Code reduzieren"],
+      "Expand Selected Code": ["Ausgewählten Code erweitern"]
+    }
+  },
+  "notebook": {
+    "add": {
+      "Launch Jupyter Notebook File Browser": ["Dateibrowser von Jupyter Notebook öffnen"],
+      "Open in %1": ["In %1 öffnen"]
+    },
+    "correct": {}
+  }
+}
