@@ -18,6 +18,7 @@ dir.create(download_dir)
 fetch <- function(file) {
     row <- sources[sources$file == file, ]
     dest <- file.path(download_dir, file)
+    if (file.exists(dest)) return(dest)  # already downloaded and checked
     # The GDC server sometimes drops a connection; try up to three times.
     for (attempt in 1:3) {
         ok <- tryCatch(download.file(row$url, dest, mode = "wb", quiet = TRUE) == 0, error = function(e) FALSE)
@@ -34,6 +35,13 @@ fetch <- function(file) {
     dest
 }
 
+# Gene annotation packages (gene symbols and names), installed for this script only.
+annotation_lib <- tempfile("annotation")
+dir.create(annotation_lib)
+for (file in sources$file[sources$dataset == "annotation"])
+    install.packages(fetch(file), lib = annotation_lib, repos = NULL, type = "source", quiet = TRUE)
+.libPaths(c(annotation_lib, .libPaths()))
+
 # First symbol/description per ID; IDs without one keep the ID as symbol.
 annotate <- function(db, ids, keytype) {
     symbol <- mapIds(db, ids, "SYMBOL", keytype, multiVals = "first")
@@ -41,6 +49,13 @@ annotate <- function(db, ids, keytype) {
     symbol[is.na(symbol)] <- ids[is.na(symbol)]
     description[is.na(description)] <- ""
     data.frame(gene_id = ids, symbol = unname(symbol), description = unname(description))
+}
+
+# Path of one file inside a downloaded Bioconductor package tarball.
+from_tarball <- function(file, path) {
+    dir <- file.path(download_dir, sub("\\.tar\\.gz$", "", file))
+    untar(fetch(file), files = path, exdir = dir)
+    file.path(dir, path)
 }
 
 write_dataset <- function(name, counts, samples, genes) {
@@ -74,7 +89,7 @@ write_dataset("milk", counts, samples, annotate(org.Mm.eg.db::org.Mm.eg.db, rown
 
 # --- airway: human airway smooth muscle cells + dexamethasone (Himes et al. 2014) --------
 suppressPackageStartupMessages(library(SummarizedExperiment))
-data("airway", package = "airway")
+load(from_tarball("airway_1.30.0.tar.gz", "airway/data/airway.RData"))
 counts <- assay(airway)
 cd <- colData(airway)
 samples <- data.frame(
@@ -90,9 +105,9 @@ keep <- genes$symbol != genes$gene_id
 write_dataset("airway", counts[keep, ], samples, genes[keep, ])
 
 # --- pasilla: fruit fly cells, pasilla knock-down (Brooks et al. 2011) -------------------
-counts <- as.matrix(read.delim(system.file("extdata", "pasilla_gene_counts.tsv", package = "pasilla"),
+counts <- as.matrix(read.delim(from_tarball("pasilla_1.38.0.tar.gz", "pasilla/inst/extdata/pasilla_gene_counts.tsv"),
                                row.names = 1))
-ann <- read.csv(system.file("extdata", "pasilla_sample_annotation.csv", package = "pasilla"))
+ann <- read.csv(from_tarball("pasilla_1.38.0.tar.gz", "pasilla/inst/extdata/pasilla_sample_annotation.csv"))
 ann$sample <- sub("fb$", "", ann$file)
 ann <- ann[order(ann$condition != "untreated", ann$sample), ]
 counts <- counts[, ann$sample]

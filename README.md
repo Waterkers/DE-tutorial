@@ -43,7 +43,7 @@ The expected answers are in the solution notebooks; in brief:
 
 ### 1. Build the image
 
-You need Docker (Docker Desktop on Windows/Mac). In this folder:
+Build the image **once**, on a computer with reliable internet, and then hand it out (step 2). Don't build it on each student computer: school networks often block one of the download servers. You need Docker (Docker Desktop on Windows/Mac). In this folder:
 
 ```bash
 docker compose build
@@ -135,6 +135,7 @@ limma and edgeR are attached in every R session, and the helpers live in their o
 |---|---|
 | "Docker is not running" | Start Docker Desktop and wait until it says it's running. |
 | Build: `Could not resolve host` / download errors | Use `docker build --network host -t de-practical:1.0 docker`. The GDC server sometimes drops connections; the build retries three times, otherwise just run it again. |
+| Build: `could not download …` or `checksum mismatch` | The network blocks or changes a download. The build needs `quay.io`, `conda.anaconda.org`, `pypi.org`, `ftp.ncbi.nlm.nih.gov`, `bioconductor.org` and `api.gdc.cancer.gov`; school networks often block one of them. Build on another network and hand out the finished image (step 2). |
 | Port 8889 is already in use | Change `127.0.0.1:8889` in `docker-compose.yml` and the start scripts. |
 | `pull access denied for de-practical` | The image isn't on this computer: `docker load -i de-practical-image.tar.gz`, or set `DE_IMAGE` in `.env`. |
 | A student's cell: `object 'dge' not found` | They skipped cells: *Run → Run All Above Selected Cell*. |

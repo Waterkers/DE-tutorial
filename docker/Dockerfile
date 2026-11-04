@@ -9,10 +9,14 @@ ARG BASE=quay.io/jupyter/r-notebook:2026-10-12
 # ---------------------------------------------------------------------------
 FROM --platform=$BUILDPLATFORM ${BASE} AS data
 
-# Bioconductor 3.22 (matches R 4.5 in the base image): data packages and gene annotation.
+# Bioconductor 3.22 (matches R 4.5 in the base image): AnnotationDbi for the gene annotation
+# packages and SummarizedExperiment to read the airway data. The data packages themselves
+# (airway, pasilla, org.*.eg.db) are downloaded by prepare_data.R with checksums, see
+# data_sources.tsv. Not from bioconda: those packages download their data in an install
+# script, and if that fails (e.g. a school network blocks bioconductor.org), mamba still
+# succeeds and leaves an empty package.
 RUN mamba install -y -c conda-forge -c bioconda \
-        bioconductor-airway=1.30.0 bioconductor-pasilla=1.38.0 \
-        bioconductor-org.mm.eg.db=3.22.0 bioconductor-org.dm.eg.db=3.22.0 bioconductor-org.hs.eg.db=3.22.0 \
+        bioconductor-annotationdbi=1.72.0 bioconductor-summarizedexperiment=1.40.0 \
  && mamba clean -afy
 COPY data_sources.tsv prepare_data.R /tmp/prep/
 RUN mkdir -p /tmp/data && Rscript /tmp/prep/prepare_data.R /tmp/prep/data_sources.tsv /tmp/data

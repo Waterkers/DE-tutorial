@@ -43,7 +43,7 @@ Die erwarteten Antworten stehen in den Lösungs-Notebooks; kurz:
 
 ### 1. Image bauen
 
-Du brauchst Docker (unter Windows/Mac Docker Desktop). In diesem Ordner:
+Baue das Image **einmal**, auf einem Computer mit zuverlässigem Internet, und verteile es dann (Schritt 2). Baue es nicht auf jedem Schülerrechner: Schulnetze sperren oft einen der Download-Server. Du brauchst Docker (unter Windows/Mac Docker Desktop). In diesem Ordner:
 
 ```bash
 docker compose build
@@ -135,6 +135,7 @@ limma und edgeR sind in jeder R-Sitzung geladen, und die Hilfsfunktionen liegen 
 |---|---|
 | „Docker läuft nicht“ | Docker Desktop starten und warten, bis es läuft. |
 | Build: `Could not resolve host` / Download-Fehler | `docker build --network host -t de-practical:1.0 docker` benutzen. Der GDC-Server bricht manchmal Verbindungen ab; der Build versucht es dreimal, sonst einfach noch einmal starten. |
+| Build: `could not download …` oder `checksum mismatch` | Das Netz sperrt oder verändert einen Download. Der Build braucht `quay.io`, `conda.anaconda.org`, `pypi.org`, `ftp.ncbi.nlm.nih.gov`, `bioconductor.org` und `api.gdc.cancer.gov`; Schulnetze sperren oft einen davon. In einem anderen Netz bauen und das fertige Image verteilen (Schritt 2). |
 | Port 8889 ist schon belegt | `127.0.0.1:8889` in `docker-compose.yml` und den Start-Skripten ändern. |
 | `pull access denied for de-practical` | Das Image ist nicht auf dem Rechner: `docker load -i de-practical-image.tar.gz`, oder `DE_IMAGE` in `.env` setzen. |
 | Zelle eines Schülers: `object 'dge' not found` | Zellen übersprungen: *Ausführen → Alle Zellen oberhalb ausführen*. |
